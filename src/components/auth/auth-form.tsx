@@ -27,11 +27,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FIELD_NAMES, FIELD_TYPES } from "@/lib/constants";
 
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-});
+// const formSchema = z.object({
+//   username: z.string().min(2, {
+//     message: "Username must be at least 2 characters.",
+//   }),
+// });
 
 interface Props<T extends FieldValues> {
   type: "SIGNIN" | "SIGNUP";
@@ -69,7 +69,7 @@ const AuthForm = <T extends FieldValues>({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
         {Object.keys(defaultValues).map((field) => (
           <FormField
             key={field}
