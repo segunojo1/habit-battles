@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import React from 'react'
 
-export const Layout = ({children}: {children: React.ReactNode}) => {
+export default function MainLayout ({children}: {children: React.ReactNode}) {
   return (
     <div>
         <header className="bg-background-light dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
@@ -52,6 +52,9 @@ export const Layout = ({children}: {children: React.ReactNode}) => {
         </div>
       </header>
         {children}
+        <footer className="text-center py-4 text-xs text-gray-500 dark:text-gray-600 border-t border-primary/20 dark:border-primary/30">
+        <p>© 2025 Habit Battles. All rights reserved.</p>
+      </footer>
     </div>
   )
 }
