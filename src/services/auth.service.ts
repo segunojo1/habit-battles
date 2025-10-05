@@ -23,15 +23,25 @@ class AuthService {
     return AuthService.instance;
   }
 
-  public async login(data: { identifier: string; password: string }) {
+  public async login(data: { Email: string; Password: string }) {
     try {
-      const response = await this.api.post(`/api/auth/login`, data);
-      if (response.data?.token && response.data?.refreshToken) {
+      const formData = new FormData();
+      formData.append("Email", data.Email);
+      formData.append("Password", data.Password);
+
+      const response = await this.api.post(`/api/auth/login`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (response.data?.token) {
         // this.setAuthTokens(response.data.token, response.data.refreshToken);
-        const user = response.data.user;
+        const user = response.data.value;
+        Cookies.set("token", response.data.token);
         Cookies.set("user", JSON.stringify(user));
         // Update user state in the store
-        useAppStore.getState().login(user);
+        useAppStore.getState().login({
+          username: user.userName ?? user.username ?? "",
+          email: user.email ?? "",
+        });
       }
       return response.data;
     } catch (error) {
@@ -42,10 +52,25 @@ class AuthService {
 
   public async signup(data: any) {
     try {
-      const res = await this.api.post(`/api/auth/register`, data);
+      const formData = new FormData();
+      Object.entries(data || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        }
+      });
+
+      const res = await this.api.post(`/api/auth/register`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       if (res.data) {
-        const user = res.data.user;
+        const user = res.data.value;
+        Cookies.set("token", res.data.token);
         Cookies.set("user", JSON.stringify(user));
+        // Update user state in the store
+        useAppStore.getState().login({
+          username: user.userName ?? user.username ?? "",
+          email: user.email ?? "",
+        });
       }
       return res.data;
     } catch (error) {

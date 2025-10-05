@@ -1,10 +1,14 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import React from 'react'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import React from "react";
 
-export default function MainLayout ({children}: {children: React.ReactNode}) {
+export default function MainLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div>
-        <header className="bg-background-light dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
+      <header className="bg-background-light dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo + Title */}
@@ -51,10 +55,10 @@ export default function MainLayout ({children}: {children: React.ReactNode}) {
           </div>
         </div>
       </header>
-        {children}
-        <footer className="text-center py-4 text-xs text-gray-500 dark:text-gray-600 border-t border-primary/20 dark:border-primary/30">
+      {children}
+      <footer className="fixed bottom-0 w-full text-center py-4 text-xs text-gray-500 dark:text-gray-600 border-t border-primary/20 dark:border-primary/30">
         <p>© 2025 Habit Battles. All rights reserved.</p>
       </footer>
     </div>
-  )
+  );
 }

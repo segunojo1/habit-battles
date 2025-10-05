@@ -1,20 +1,26 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import React from "react";
+import useAppStore from "@/store/app.store";
 
 const Dashboard = () => {
+  const { user, isAuthenticated } = useAppStore();
+  const username = user?.username || "Friend";
   return (
     <div className="nunito-sans">
-      
-
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-4xl mx-auto">
           {/* Welcome */}
           <div className="mb-8">
             <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white">
-              Welcome back, Sarah
+              {isAuthenticated ? `Welcome back, ${username}` : "Welcome to Habit Battles"}
             </h1>
+            {isAuthenticated && user?.email && (
+              <p className="mt-2 text-gray-600 dark:text-gray-400">{user.email}</p>
+            )}
           </div>
 
           {/* Stats */}
@@ -71,11 +77,12 @@ const Dashboard = () => {
                     compete!
                   </p>
                 </div>
-
-                <button className="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all transform hover:scale-105">
-                  <span className="mr-2">⚔️</span>
-                  <span>Start New Battle</span>
-                </button>
+                <Link href="/create-new-habit">
+                  <Button className="flex items-center justify-center rounded-lg h-12 px-6 bg-primary text-white text-base font-bold shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all transform hover:scale-105">
+                    <span className="mr-2">⚔️</span>
+                    <span>Start New Battle</span>
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>

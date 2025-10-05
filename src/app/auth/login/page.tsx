@@ -13,7 +13,7 @@ const Login = () => {
           <AuthForm
             type="SIGNIN"
             schema={signInSchema}
-            defaultValues={{ identifier: "", password: "" }}
+            defaultValues={{ Email: "", Password: "" }}
             onSubmit={(data) => authService.login(data)}
           />
         </div>

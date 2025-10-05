@@ -102,11 +102,9 @@ class AppService {
   }) {
     try {
       const response = await this.api.post(`/api/battle/create`, {
-        params: {
-          habit,
-          duration,
-          opponentId
-        },
+        habit,
+        duration,
+        opponentId,
       });
       return response.data;
     } catch (error) {
