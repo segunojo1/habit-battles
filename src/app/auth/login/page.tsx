@@ -14,7 +14,7 @@ const Login = () => {
             type="SIGNIN"
             schema={signInSchema}
             defaultValues={{ identifier: "", password: "" }}
-            onSubmit={authService.login}
+            onSubmit={(data) => authService.login(data)}
           />
         </div>
       </div>

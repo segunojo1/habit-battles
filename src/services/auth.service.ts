@@ -13,7 +13,7 @@ class AuthService {
         "Content-Type": "application/json",
       },
     });
-    // No token interceptor needed for auth endpoints
+
   }
 
   public static getInstance(): AuthService {
