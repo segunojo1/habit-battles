@@ -42,7 +42,7 @@ class AuthService {
 
   public async signup(data: any) {
     try {
-      const res = await this.api.post(`/api/auth/signup`, data);
+      const res = await this.api.post(`/api/auth/register`, data);
       if (res.data) {
         const user = res.data.user;
         Cookies.set("user", JSON.stringify(user));

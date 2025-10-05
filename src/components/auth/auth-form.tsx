@@ -26,6 +26,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { FIELD_NAMES, FIELD_TYPES } from "@/lib/constants";
+import Link from "next/link";
 
 // const formSchema = z.object({
 //   username: z.string().min(2, {
@@ -68,8 +69,16 @@ const AuthForm = <T extends FieldValues>({
   };
 
   return (
+    <div className="nunito-sans w-full flex flex-col items-center mb-8">
+      
+      <h1 className="nunito-sans text-2xl font-bold text-slate-200">
+        Habit Battles ⚔️
+      </h1>
+      <p className="text-slate-200 nunito-sans">
+        {isSignIn ? "Sign in to Habit Battle" : "Sign up on Habit Battle"}
+      </p>
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 w-[400px]">
         {Object.keys(defaultValues).map((field) => (
           <FormField
             key={field}
@@ -83,8 +92,10 @@ const AuthForm = <T extends FieldValues>({
                 <FormControl>
                   <Input
                     required
+                    placeholder={field.name}
                     type={FIELD_TYPES[field.name as keyof typeof FIELD_TYPES]}
                     {...field}
+                    className="form-input h-full bg-slate-800 border-slate-700 placeholder-slate-500 focus:ring-purple-500 focus:border-purple-500 block rounded-md !p-3 text-slate-300"
                   />
                 </FormControl>
                 <FormMessage />
@@ -92,11 +103,21 @@ const AuthForm = <T extends FieldValues>({
             )}
           />
         ))}
-        <Button type="submit" className="cursor-pointer">
+        {isSignIn && (
+          <div className="text-right">
+            <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">Forgot Password?</Link>
+          </div>
+        )}
+        <Button type="submit" className="nunito-sans h-full w-full flex justify-center !py-3 px-4 border border-transparent !rounded-md shadow-sm text-base font-semibold text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-purple-500 cursor-pointer">
             {loading ? "Loading..." : isSignIn ? "Login" : "Sign up"}
         </Button>
       </form>
+      <p className="text-center mt-6 text-sm text-slate-500">
+        {isSignIn ? "Dont have an account?" : "Already have an account?"}
+         <Link href={isSignIn ? "/auth/sign-up" : "/auth/login"} className="font-medium text-purple-400 hover:text-purple-300">{isSignIn ? "Sign Up" : "Login"}</Link>
+      </p>
     </Form>
+    </div>
   );
 };
 
