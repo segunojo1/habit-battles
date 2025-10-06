@@ -1,88 +1,184 @@
-import React from 'react'
+'use client';
+
+import appService from '@/services/app.service';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
+type Player = { userId: number; username: string; streak: number };
+type BattleValue = {
+  id: number;
+  habit: string;
+  startDate: string;
+  endDate: string;
+  monsterType: string;
+  durationDays: number;
+  creatorHealth: number;
+  opponentHealth: number;
+  status: string;
+  players: { $values: Player[] };
+};
 
 const Battle = () => {
-  return (
-    <div className="flex flex-col min-h-screen bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+  const params = useParams();
+  const id = Array.isArray(params?.id) ? params.id[0] : (params?.id as string);
 
-      <main className="flex-grow container mx-auto px-6 py-8 flex justify-center items-center">
-        <div className="w-full max-w-2xl text-center">
-          {/* Battle Image */}
-          <div className="relative mb-6">
-            <div
-              className="aspect-[4/3] bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage:
-                  'url("https://lh3.googleusercontent.com/aida-public/AB6AXuB6UCs9l8SLucUYrkdE0B2nxD-KFmVFW4Xf2Dk8W-gmZ_aPeXsaGiwgDyGL6quyh8VVylcEgbuQKSS0hL28wB_39hkaFblcByUNlbtTZtfKXP0OfvQzAh_3oCv6fCvSoUByO8Eawtx7GRJJi1B6XRCgm27-dl29EDM7NlaQ14bWl2VTq3EmykXEOMYv3bzAtCW9g6OS6a_upM7Hoo9XTnFNBq2RUo8eAPqiW6ycoj3FcAhsNVJ6aQRnOggZf96gz8fOlrFR5rm6DZM")',
-              }}
-            />
-          </div>
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [battle, setBattle] = useState<BattleValue | null>(null);
+  const [strikeLoading, setStrikeLoading] = useState(false);
 
-          {/* Health Bar */}
-          <div className="mb-8 px-4">
-            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-              Shadow Beast&apos;s Health
-            </p>
-            <div className="w-full bg-primary/20 dark:bg-primary/30 rounded-full h-4">
-              <div
-                className="bg-primary h-4 rounded-full"
-                style={{ width: "75%" }}
-              />
-            </div>
-          </div>
+  const fetchBattleStatus = useCallback(async () => {
+    if (!id) return;
+    try {
+      setLoading(true);
+      const response = await appService.getBattleStatus(id);
+      setBattle(response?.value ?? null);
+      setError(null);
+    } catch (err: any) {
+      setError('Failed to fetch battle status');
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
-          {/* Players */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 px-4">
-            {/* Player 1 */}
-            <div className="bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 p-4 rounded flex items-center justify-between">
-              <div>
-                <p className="font-bold text-lg text-gray-900 dark:text-white">
-                  Player 1: Alex
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Current Streak: 5 days 🔥
-                </p>
-              </div>
-              <div
-                className="w-12 h-12 rounded-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAT6YhNaAM1Z8lkFjqIZouiBuQilzDctrE5WfVhXSmVcmIXL_qqb1TeuyPSdEt1tiiZfgl9e5Vngbexp_ZquScpoKwHDWwUCypec6YJYZS8DR7dzC7ks1K5BRFM5kFyhptiUXOI9e2WMgfEw_J1tMHuilB67GZPj7qdQp7E9MyKYltc_psq-S6FYysZkALibN8Nh7828_Cqn6SfPwhi3ebLr_aFJ88YxtnLyjO3xt_9202ueCNOZWogXPT1wPcyeS3NH_2dqxo8Ks")',
-                }}
-              />
-            </div>
+  useEffect(() => {
+    fetchBattleStatus();
+  }, [fetchBattleStatus]);
 
-            {/* Player 2 */}
-            <div className="bg-background-light dark:bg-background-dark border border-primary/20 dark:border-primary/30 p-4 rounded flex items-center justify-between">
-              <div>
-                <p className="font-bold text-lg text-gray-900 dark:text-white">
-                  Player 2: Sarah
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Current Streak: 3 days
-                </p>
-              </div>
-              <div
-                className="w-12 h-12 rounded-full bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    'url("https://lh3.googleusercontent.com/aida-public/AB6AXuArCUStEWpU6O_c39k8VjcmY4OUOCa-OJiowYqklEufQwS78yWpVym_XmB0C9lhdYWJmDdefZCH_3Fpt1_-Vu0FFRh5q8ruOhlJndxmrFcSUY5RPaiWI2PkyReruvxYOto1losPZFLppVqKjqKcwU68UhFBj32AyY1YvIaaARjVVgbf--g5Zk6UxTgKJq93O8VBHdcsjXe252J_IGUIASEBeVxojYS8uQe8WF7Cn4WkjSoc4sMeO-mkQBIvEKzF4XW-NwQ_AmOs14U")',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Strike Button */}
-          <div className="px-4">
-            <button className="w-full bg-primary text-white font-bold py-4 px-6 rounded text-lg tracking-wider uppercase hover:opacity-90 transition-opacity">
-              Strike!
-            </button>
-          </div>
-        </div>
-      </main>
-
+  const handleStrike = async () => {
+    if (!id) return;
+    try {
+      setStrikeLoading(true);
+      await appService.habitStrike(id);
+      toast.success('Strike logged!');
       
-    </div>
-  )
-}
+      
+      await fetchBattleStatus();
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setStrikeLoading(false);
+    }
+  };
 
-export default Battle
+
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch {
+      return iso;
+    }
+  };
+
+  return (
+    <div className="bg-[#151022] min-h-[calc(100vh-64px)]">
+      <main className="max-w-4xl mx-auto px-6 py-10">
+        {loading && (
+          <div className="text-center text-violet-200/80">Loading battle...</div>
+        )}
+        {error && (
+          <div className="text-center text-red-300">{error}</div>
+        )}
+
+        {battle && (
+          <div className="space-y-8">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+              <div>
+                <h1 className="text-3xl font-extrabold text-white capitalize">
+                  {battle.habit} Battle
+                </h1>
+                <p className="text-sm text-violet-200/70">
+                  {formatDate(battle.startDate)} – {formatDate(battle.endDate)} · {battle.durationDays} days
+                </p>
+              </div>
+              <div className="self-start sm:self-auto">
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-700/30 border border-violet-500/40 text-violet-100">
+                  {battle.status}
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-xl overflow-hidden bg-black/20 border border-white/10">
+              <div className="aspect-[4/2] bg-gradient-to-br from-violet-700/40 via-fuchsia-600/30 to-indigo-700/30" />
+              <div className="p-4 flex items-center justify-between">
+                <div className="text-white">
+                  <div className="text-sm opacity-80">Monster</div>
+                  <div className="font-semibold capitalize">{battle.monsterType.replaceAll('_', ' ')}</div>
+                </div>
+                <div className="text-right text-white">
+                  <div className="text-sm opacity-80">Battle ID</div>
+                  <div className="font-semibold">#{battle.id}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white font-semibold">Creator</span>
+                  <span className="text-violet-200/80 text-sm">{battle.creatorHealth}%</span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-3 bg-gradient-to-r from-green-500 to-emerald-400"
+                    style={{ width: `${Math.max(0, Math.min(100, battle.creatorHealth))}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-black/20 border border-white/10 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-white font-semibold">Opponent</span>
+                  <span className="text-violet-200/80 text-sm">{battle.opponentHealth}%</span>
+                </div>
+                <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-3 bg-gradient-to-r from-red-500 to-rose-400"
+                    style={{ width: `${Math.max(0, Math.min(100, battle.opponentHealth))}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Players */}
+            <section>
+              <h2 className="text-lg font-bold text-white mb-3">Players</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {(battle.players?.$values ?? []).map((p) => (
+                  <div key={`${p.userId}-${p.username}`} className="bg-black/20 border border-white/10 rounded-xl p-4 flex items-center justify-between">
+                    <div>
+                      <div className="text-white font-semibold">{p.username}</div>
+                      <div className="text-violet-200/70 text-sm">Streak: {p.streak} days</div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-white/10" />
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Strike Action */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={handleStrike}
+                disabled={strikeLoading}
+                className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white font-bold py-3 px-6 rounded-lg tracking-wide transition-colors"
+              >
+                {strikeLoading ? 'Logging...' : 'Strike!'}
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+};
+
+export default Battle;

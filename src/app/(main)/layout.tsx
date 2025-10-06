@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 import React from "react";
 
 export default function MainLayout({
@@ -7,15 +8,15 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <header className="bg-background-light dark:bg-background-dark/50 backdrop-blur-sm sticky top-0 z-10">
+    <div className="bg-[#151022]">
+      <header className="backdrop-blur-sm sticky top-0 z-10 text-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo + Title */}
+            
             <div className="flex items-center gap-4">
               <div className="w-8 h-8">
                 <svg
-                  className="text-primary"
+                  className="text-violet-400"
                   fill="none"
                   viewBox="0 0 48 48"
                   xmlns="http://www.w3.org/2000/svg"
@@ -28,15 +29,22 @@ export default function MainLayout({
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-xl font-bold text-white">
                 Habit Battles
               </h2>
             </div>
 
+            {/* Center nav */}
+            <nav className="hidden md:flex items-center gap-6 text-sm font-semibold">
+              <Link href="/dashboard" className="text-violet-100 hover:text-white">Dashboard</Link>
+              <Link href="/shop" className="text-violet-100 hover:text-white">Shop</Link>
+              <Link href="/leaderboard" className="text-violet-100 hover:text-white">Leaderboard</Link>
+            </nav>
+
             <div className="flex items-center gap-4">
-              <button className="flex items-center justify-center rounded-full h-10 w-10 bg-background-light dark:bg-background-dark hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors">
+              <button className="flex items-center justify-center rounded-full h-10 w-10 bg-black/30 border border-white/10 hover:bg-black/40 transition-colors">
                 <svg
-                  className="text-gray-600 dark:text-gray-400"
+                  className="text-violet-200"
                   fill="currentColor"
                   height="24"
                   viewBox="0 0 256 256"
@@ -56,7 +64,7 @@ export default function MainLayout({
         </div>
       </header>
       {children}
-      <footer className="fixed bottom-0 w-full text-center py-4 text-xs text-gray-500 dark:text-gray-600 border-t border-primary/20 dark:border-primary/30">
+      <footer className="fixed bottom-0 bg-[#151022] w-full text-center py-4 text-xs text-gray-500 dark:text-gray-600 border-t border-primary/20 dark:border-primary/30">
         <p>© 2025 Habit Battles. All rights reserved.</p>
       </footer>
     </div>

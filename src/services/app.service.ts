@@ -112,6 +112,51 @@ class AppService {
       throw error;
     }
   }
+
+  public async strike(battleId: string) {
+    try {
+      const response = await this.api.post(`/api/battle/${battleId}/habit-strike`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to strike battle", error);
+      throw error;
+    }
+  }
+  
+  public async habitStrike(battleId: string) {
+    return this.strike(battleId);
+  }
+
+  public async activateBattle(battleId: string, opponentId: number) {
+    try {
+        const response = await this.api.post(`/api/battle/${battleId}/accept/${opponentId}`);
+  return response.data;
+    } catch (error) {
+        console.error("Failed to activate battle", error);
+        
+    }
+  }
+  
+  public async getBattleStatus(battleId: string) {
+    try {
+      const response = await this.api.get(`/api/battle/${battleId}/status`);
+      return response.data;
+    } catch (error) {
+        console.error("Failed to get battle status", error);
+      throw error;
+    }
+  }
+
+  public async getLeaderboard() {
+    try {
+        const response = await this.api.get(`/api/battle/leaderboard`);
+        return response.data;
+    } catch (error) {
+        console.error("Failed to get leaderboard", error);
+        throw error;
+    }
+  }
 }
+
 
 export default AppService.getInstance();

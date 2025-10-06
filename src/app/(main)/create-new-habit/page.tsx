@@ -38,9 +38,11 @@ const CreateNewHabit = () => {
     try {
       setLoading(true);
       const res = await appService.createBattle({ habit, duration, opponentId });
-      toast("Challenge created successfully!");
-      if (res?.id) {
-        router.push(`/battle/${res.id}`);
+      const activ = await appService.activateBattle(res.value.id, opponentId);
+    
+      toast("Challenge created and activated successfully!");
+      if (res?.value?.id) {
+        router.push(`/battle/${res.value.id}`);
       }
     } catch (err) {
       toast("Failed to create challenge");
@@ -50,24 +52,20 @@ const CreateNewHabit = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark flex flex-col min-h-screen">
-      <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md space-y-8">
-          <div>
-            <h2 className="text-center text-3xl font-extrabold text-text-light dark:text-text-dark">
-              Create Challenge ⚔️
-            </h2>
+    <div className="bg-[#151022] min-h-[calc(100vh-64px)]">
+      <main className="max-w-2xl mx-auto px-6 py-10">
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-white">Create Challenge ⚔️</h2>
+            <p className="text-sm text-violet-200/70 mt-2">Pick a habit, choose a duration, invite an opponent.</p>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-card-light dark:bg-card-dark p-8 rounded-lg shadow-md space-y-6">
-            {/* Habit Select */}
+          <form onSubmit={handleSubmit} className="bg-black/20 border border-white/10 p-8 rounded-xl space-y-6">
             <div className="space-y-4">
               <div>
-
                 <Select onValueChange={setSelectedHabit}>
-                  <SelectTrigger className="w-full py-3 h-full">
-                    <SelectValue placeholder="Select a habit" />
+                  <SelectTrigger className="w-full h-12 rounded-lg bg-black/30 border border-white/10 text-white">
+                    <SelectValue placeholder="Select a habit" className="text-white" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="workout">Workout</SelectItem>
@@ -78,14 +76,13 @@ const CreateNewHabit = () => {
               </div>
 
               <div className="relative flex items-center">
-                <div className="flex-grow border-t border-border-light dark:border-border-dark"></div>
-                <span className="flex-shrink mx-4 text-gray-500 dark:text-gray-400 text-sm">
+                <div className="flex-grow border-t border-white/10"></div>
+                <span className="flex-shrink mx-4 text-violet-200/70 text-sm">
                   OR
                 </span>
-                <div className="flex-grow border-t border-border-light dark:border-border-dark"></div>
+                <div className="flex-grow border-t border-white/10"></div>
               </div>
 
-              {/* Custom Habit */}
               <div>
                 <label className="sr-only" htmlFor="custom-habit">
                   Custom habit
@@ -97,18 +94,16 @@ const CreateNewHabit = () => {
                   placeholder="Enter a custom habit"
                   value={customHabit}
                   onChange={(e) => setCustomHabit(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-3 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark placeholder-gray-500 dark:placeholder-gray-400 text-text-light dark:text-text-dark rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-primary/50 focus:border-primary/50 text-base"
+                  className="appearance-none relative block w-full px-3 h-12 border border-white/10 bg-black/30 placeholder-violet-200/60 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/40 text-base"
                 />
               </div>
             </div>
 
-            {/* Challenge Duration */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <h3 className="text-sm font-medium text-violet-200/80">
                 Challenge Duration
               </h3>
               <div className="grid grid-cols-3 gap-3">
-                {/* 7 Days */}
                 <label className="cursor-pointer">
                   <input
                     type="radio"
@@ -118,12 +113,11 @@ const CreateNewHabit = () => {
                     checked={duration === 7}
                     onChange={() => setDuration(7)}
                   />
-                  <div className="text-center py-2 px-3 rounded border border-border-light dark:border-border-dark text-gray-500 dark:text-gray-400 peer-checked:border-primary dark:peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/50 peer-checked:text-text-light dark:peer-checked:text-text-dark font-medium">
+                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
                     7 Days
                   </div>
                 </label>
 
-                {/* 14 Days */}
                 <label className="cursor-pointer">
                   <input
                     type="radio"
@@ -133,12 +127,11 @@ const CreateNewHabit = () => {
                     checked={duration === 14}
                     onChange={() => setDuration(14)}
                   />
-                  <div className="text-center py-2 px-3 rounded border border-border-light dark:border-border-dark text-gray-500 dark:text-gray-400 peer-checked:border-primary dark:peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/50 peer-checked:text-text-light dark:peer-checked:text-text-dark font-medium">
+                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
                     14 Days
                   </div>
                 </label>
 
-                {/* 30 Days */}
                 <label className="cursor-pointer">
                   <input
                     type="radio"
@@ -148,16 +141,15 @@ const CreateNewHabit = () => {
                     checked={duration === 30}
                     onChange={() => setDuration(30)}
                   />
-                  <div className="text-center py-2 px-3 rounded border border-border-light dark:border-border-dark text-gray-500 dark:text-gray-400 peer-checked:border-primary dark:peer-checked:border-primary peer-checked:ring-2 peer-checked:ring-primary/50 peer-checked:text-text-light dark:peer-checked:text-text-dark font-medium">
+                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
                     30 Days
                   </div>
                 </label>
               </div>
             </div>
 
-            {/* Invite Friend */}
             <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              <h3 className="text-sm font-medium text-violet-200/80">
                 Invite a Friend
               </h3>
               <div>
@@ -172,7 +164,7 @@ const CreateNewHabit = () => {
                   placeholder="Enter opponent ID"
                   value={invite}
                   onChange={(e) => setInvite(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-3 border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark placeholder-gray-500 dark:placeholder-gray-400 text-text-light dark:text-text-dark rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-primary/50 focus:border-primary/50 text-base"
+                  className="appearance-none relative block w-full px-3 h-12 border border-white/10 bg-black/30 placeholder-violet-200/60 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/40 text-base"
                 />
               </div>
             </div>
@@ -180,7 +172,7 @@ const CreateNewHabit = () => {
             <div>
               <Button
                 type="submit"
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-bold rounded  "
+                className="group relative w-full flex justify-center h-12 px-4 text-base font-bold rounded-lg"
               >
                 {loading ? "Creating..." : "Create Challenge"}
               </Button>
