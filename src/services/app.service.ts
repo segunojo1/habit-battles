@@ -94,17 +94,17 @@ class AppService {
   public async createBattle({
     habit,
     duration,
-    opponentId,   
+    opponentEmail,   
   }: {
     habit: string,
     duration: number,
-    opponentId: number
+    opponentEmail: string
   }) {
     try {
       const response = await this.api.post(`/api/battle/create`, {
         habit,
         duration,
-        opponentId,
+        opponentEmail,
       });
       return response.data;
     } catch (error) {

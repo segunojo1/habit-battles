@@ -30,14 +30,15 @@ const CreateNewHabit = () => {
     }
 
     const opponentId = Number(invite);
-    if (!opponentId || Number.isNaN(opponentId)) {
-      toast("Please enter a valid opponent ID (number) in the Invite field.");
-      return;
-    }
+    const opponentEmail = invite;
+    // if (!opponentId || Number.isNaN(opponentId)) {
+    //   toast("Please enter a valid opponent ID (number) in the Invite field.");
+    //   return;
+    // }
 
     try {
       setLoading(true);
-      const res = await appService.createBattle({ habit, duration, opponentId });
+      const res = await appService.createBattle({ habit, duration, opponentEmail });
       const activ = await appService.activateBattle(res.value.id, opponentId);
     
       toast("Challenge created and activated successfully!");
@@ -161,7 +162,7 @@ const CreateNewHabit = () => {
                   name="invite"
                   type="text"
                   required
-                  placeholder="Enter opponent ID"
+                  placeholder="Enter opponent Email"
                   value={invite}
                   onChange={(e) => setInvite(e.target.value)}
                   className="appearance-none relative block w-full px-3 h-12 border border-white/10 bg-black/30 placeholder-violet-200/60 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/40 text-base"

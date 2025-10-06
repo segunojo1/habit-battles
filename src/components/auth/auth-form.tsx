@@ -64,7 +64,7 @@ const AuthForm = <T extends FieldValues>({
       router.push("/dashboard");
     } catch (error) {
       toast(isSignIn ? "Login failed" : "Sign up failed");
-    } finally {
+    } finally {  
       setLoading(false);
     }
   };

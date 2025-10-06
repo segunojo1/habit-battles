@@ -4,6 +4,8 @@ import appService from '@/services/app.service';
 import { useParams } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import Cookies from "js-cookie";
+import { useMemo} from 'react';
 
 type Player = { userId: number; username: string; streak: number };
 type BattleValue = {
@@ -53,7 +55,7 @@ const Battle = () => {
       await appService.habitStrike(id);
       toast.success('Strike logged!');
       
-      
+
       await fetchBattleStatus();
     } catch (err: any) {
       toast.error(err.message);
@@ -75,6 +77,21 @@ const Battle = () => {
       return iso;
     }
   };
+
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    try {
+      const raw = Cookies.get("user");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setProfile(parsed);
+      }
+    } catch (e) {
+    }
+  }, []);
+
+  const coinBalance = useMemo(() => profile?.coinBalance ?? 0, [profile]);
 
   return (
     <div className="bg-[#151022] min-h-[calc(100vh-64px)]">
@@ -98,10 +115,11 @@ const Battle = () => {
                   {formatDate(battle.startDate)} – {formatDate(battle.endDate)} · {battle.durationDays} days
                 </p>
               </div>
-              <div className="self-start sm:self-auto">
+              <div className="self-start sm:self-auto flex flex-col gap-2">
                 <span className="px-3 py-1 rounded-full text-xs font-semibold bg-violet-700/30 border border-violet-500/40 text-violet-100">
                   {battle.status}
                 </span>
+                <p className="text-sm text-violet-200/70">💸 {coinBalance} Coins</p>
               </div>
             </div>
 
