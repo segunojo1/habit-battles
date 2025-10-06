@@ -26,7 +26,7 @@ export default function Home() {
         <p className="text-violet-200/70">
           Join the battle of habits and see who can last the longest.
         </p>
-        <Link href="/dashboard">
+        <Link href="/auth/sign-up">
           <Button className=" font-bold p-4">Get Started</Button>
         </Link>
       </div>
