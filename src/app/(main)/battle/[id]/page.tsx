@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import Cookies from "js-cookie";
 import { useMemo} from 'react';
 
-type Player = { userId: number; username: string; streak: number };
+type Player = { userId: number; username: string; streak: number; coins: number };
 type BattleValue = {
   id: number;
   habit: string;
@@ -174,6 +174,7 @@ const Battle = () => {
                     <div>
                       <div className="text-white font-semibold">{p.username}</div>
                       <div className="text-violet-200/70 text-sm">Streak: {p.streak} days</div>
+                      <div className="text-violet-200/70 text-sm">Coins: {p.coins.toLocaleString?.() ?? p.coins}</div>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-white/10" />
                   </div>
