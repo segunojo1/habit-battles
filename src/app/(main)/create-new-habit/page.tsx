@@ -29,8 +29,8 @@ const CreateNewHabit = () => {
       return;
     }
 
-    const opponentId = Number(invite);
-    const opponentEmail = invite;
+    const email = invite;
+    let opponentEmail = invite;
     // if (!opponentId || Number.isNaN(opponentId)) {
     //   toast("Please enter a valid opponent ID (number) in the Invite field.");
     //   return;
@@ -39,7 +39,7 @@ const CreateNewHabit = () => {
     try {
       setLoading(true);
       const res = await appService.createBattle({ habit, duration, opponentEmail });
-      const activ = await appService.activateBattle(res.value.id, opponentId);
+      const activ = await appService.activateBattle(res.value.id, email);
     
       toast("Challenge created and activated successfully!");
       if (res?.value?.id) {

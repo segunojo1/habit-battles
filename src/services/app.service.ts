@@ -127,9 +127,9 @@ class AppService {
     return this.strike(battleId);
   }
 
-  public async activateBattle(battleId: string, opponentId: number) {
+  public async activateBattle(battleId: string, email: string) {
     try {
-        const response = await this.api.post(`/api/battle/${battleId}/accept/${opponentId}`);
+        const response = await this.api.post(`/api/battle/${battleId}/accept/${email}`);
   return response.data;
     } catch (error) {
         console.error("Failed to activate battle", error);

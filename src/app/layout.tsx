@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Habit Battles",
-  description: "Battle your habits",
+  description: "Battle your habits with peers",
 };
 
 export default function RootLayout({
