@@ -1,183 +1,139 @@
 "use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
+  SelectTrigger,
   SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import appService from "@/services/app.service";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 import { toast } from "sonner";
 
-const CreateNewHabit = () => {
+const CreateHabitBattle = () => {
   const router = useRouter();
-  const [selectedHabit, setSelectedHabit] = useState<string>("");
-  const [customHabit, setCustomHabit] = useState<string>("");
-  const [duration, setDuration] = useState<number>(14);
-  const [invite, setInvite] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [pickedHabit, setPickedHabit] = useState("");
+  const [customOne, setCustomOne] = useState("");
+  const [days, setDays] = useState(14);
+  const [inviteMail, setInviteMail] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // this   creates a habit battle and redirect when done
+  const handleBattle = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const habit = customHabit.trim() || selectedHabit.trim();
-    if (!habit) {
-      toast("Please select or enter a habit.");
+
+    const habitToUse = (customOne || pickedHabit).trim();
+    if (!habitToUse) {
+      toast("Pick or type a habit first, bro ");
       return;
     }
 
-    const email = invite;
-    let opponentEmail = invite;
-    // if (!opponentId || Number.isNaN(opponentId)) {
-    //   toast("Please enter a valid opponent ID (number) in the Invite field.");
-    //   return;
-    // }
-
     try {
-      setLoading(true);
-      const res = await appService.createBattle({ habit, duration, opponentEmail });
-      const activ = await appService.activateBattle(res.value.id, email);
-    
-      toast("Challenge created and activated successfully!");
-      if (res?.value?.id) {
-        router.push(`/battle/${res.value.id}`);
-      }
+      setBusy(true);
+      const res = await appService.createBattle({
+        habit: habitToUse,
+        duration: days,
+        opponentEmail: inviteMail,
+      });
+
+      await appService.activateBattle(res.value.id, inviteMail);
+      toast("Battle created successfully ⚔️");
+      if (res?.value?.id) router.push(`/battle/${res.value.id}`);
     } catch (err) {
-      toast("Failed to create challenge");
+      toast(err.message);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
   };
 
   return (
-    <div className="bg-[#151022] min-h-[calc(100vh-64px)]">
-      <main className="max-w-2xl mx-auto px-6 py-10">
-        <div className="space-y-6">
+    <div className="bg-[#14101d] min-h-[calc(100vh-64px)]">
+      <main className="max-w-2xl mx-auto px-[22px] py-[48px]">
+        <div className="space-y-[26px]">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-white">Create Challenge ⚔️</h2>
-            <p className="text-sm text-violet-200/70 mt-2">Pick a habit, choose a duration, invite an opponent.</p>
+            <h2 className="text-[1.9rem] font-extrabold text-[#ffffff] tracking-tight">
+              Start a Habit Battle ⚔️
+            </h2>
+            <p className="text-[13.5px] text-[#bda8ffb3] mt-[6px]">
+              Choose a habit, duration & who you’re up against.
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-black/20 border border-white/10 p-8 rounded-xl space-y-6">
-            <div className="space-y-4">
-              <div>
-                <Select onValueChange={setSelectedHabit}>
-                  <SelectTrigger className="w-full h-12 rounded-lg bg-black/30 border border-white/10 text-white">
-                    <SelectValue placeholder="Select a habit" className="text-white" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="workout">Workout</SelectItem>
-                    <SelectItem value="read-a-book">Read a book</SelectItem>
-                    <SelectItem value="meditate">Meditate</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          <form
+            onSubmit={handleBattle}
+            className="bg-[#0e0a16]/60 border border-[#3a3055]/30 p-[32px] rounded-[14px] space-y-[22px]"
+          >
+            <div className="space-y-[18px]">
+              <Select onValueChange={setPickedHabit}>
+                <SelectTrigger className="w-full h-[46px] rounded-[10px] bg-[#120c22]/70 border border-[#3d335b]/40 text-white px-[14px]">
+                  <SelectValue placeholder="Pick a habit" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a142a] border border-[#3d335b]/40">
+                  <SelectItem value="workout">Workout</SelectItem>
+                  <SelectItem value="read">Read a Book</SelectItem>
+                  <SelectItem value="meditate">Meditate</SelectItem>
+                </SelectContent>
+              </Select>
 
               <div className="relative flex items-center">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink mx-4 text-violet-200/70 text-sm">
-                  OR
-                </span>
-                <div className="flex-grow border-t border-white/10"></div>
+                <div className="flex-grow border-t border-[#3c2b63]/40"></div>
+                <span className="mx-[12px] text-[#cdbdffcc] text-[13px]">or</span>
+                <div className="flex-grow border-t border-[#3c2b63]/40"></div>
               </div>
 
-              <div>
-                <label className="sr-only" htmlFor="custom-habit">
-                  Custom habit
-                </label>
-                <Input
-                  id="custom-habit"
-                  name="custom-habit"
-                  type="text"
-                  placeholder="Enter a custom habit"
-                  value={customHabit}
-                  onChange={(e) => setCustomHabit(e.target.value)}
-                  className="appearance-none relative block w-full px-3 h-12 border border-white/10 bg-black/30 placeholder-violet-200/60 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/40 text-base"
-                />
-              </div>
+              <Input
+                placeholder="Type your own habit..."
+                value={customOne}
+                onChange={(e) => setCustomOne(e.target.value)}
+                className="w-full h-[46px] border border-[#3d335b]/40 bg-[#120c22]/70 text-white rounded-[10px] px-[13px] placeholder-[#b3a2e7cc] focus:ring-[1.8px] focus:ring-[#7a5af8b3] focus:border-[#7a5af8]"
+              />
             </div>
 
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-violet-200/80">
-                Challenge Duration
+            <div className="space-y-[10px] mt-[6px]">
+              <h3 className="text-[13px] font-medium text-[#c8bdf9cc]">
+                Duration
               </h3>
-              <div className="grid grid-cols-3 gap-3">
-                <label className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="duration"
-                    value="7"
-                    className="sr-only peer"
-                    checked={duration === 7}
-                    onChange={() => setDuration(7)}
-                  />
-                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
-                    7 Days
-                  </div>
-                </label>
-
-                <label className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="duration"
-                    value="14"
-                    className="sr-only peer"
-                    checked={duration === 14}
-                    onChange={() => setDuration(14)}
-                  />
-                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
-                    14 Days
-                  </div>
-                </label>
-
-                <label className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="duration"
-                    value="30"
-                    className="sr-only peer"
-                    checked={duration === 30}
-                    onChange={() => setDuration(30)}
-                  />
-                  <div className="text-center py-2 px-3 rounded-lg border border-white/10 text-violet-200/80 peer-checked:border-violet-500 peer-checked:ring-2 peer-checked:ring-violet-500/40 peer-checked:text-white font-medium">
-                    30 Days
-                  </div>
-                </label>
+              <div className="grid grid-cols-3 gap-[10px]">
+                {[7, 14, 30].map((num) => (
+                  <label key={num} className="cursor-pointer">
+                    <input
+                      type="radio"
+                      name="days"
+                      value={num}
+                      className="sr-only peer"
+                      checked={days === num}
+                      onChange={() => setDays(num)}
+                    />
+                    <div className="text-center py-[7px] px-[10px] rounded-[9px] border border-[#3d335b]/40 text-[#cdbdffcc] peer-checked:border-[#8758ff] peer-checked:ring-[1.5px] peer-checked:ring-[#8758ff70] peer-checked:text-[#ffffff] font-medium transition-all">
+                      {num} Days
+                    </div>
+                  </label>
+                ))}
               </div>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-violet-200/80">
-                Invite a Friend
+            <div className="space-y-[10px]">
+              <h3 className="text-[13px] font-medium text-[#c8bdf9cc]">
+                Invite Friend
               </h3>
-              <div>
-                <label className="sr-only" htmlFor="invite-friend">
-                  Invite a Friend
-                </label>
-                <input
-                  id="invite-friend"
-                  name="invite"
-                  type="text"
-                  required
-                  placeholder="Enter opponent Email"
-                  value={invite}
-                  onChange={(e) => setInvite(e.target.value)}
-                  className="appearance-none relative block w-full px-3 h-12 border border-white/10 bg-black/30 placeholder-violet-200/60 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500/40 text-base"
-                />
-              </div>
+              <Input
+                placeholder="Opponent’s email"
+                required
+                value={inviteMail}
+                onChange={(e) => setInviteMail(e.target.value)}
+                className="w-full h-[46px] border border-[#3d335b]/40 bg-[#120c22]/70 text-white rounded-[10px] px-[13px] placeholder-[#b3a2e7cc] focus:ring-[1.8px] focus:ring-[#7a5af8b3] focus:border-[#7a5af8]"
+              />
             </div>
 
-            <div>
-              <Button
-                type="submit"
-                className="group relative w-full flex justify-center h-12 px-4 text-base font-bold rounded-lg"
-              >
-                {loading ? "Creating..." : "Create Challenge"}
-              </Button>
-            </div>
+            <Button
+              type="submit"
+              className="w-full h-[46px] text-[15px] font-bold rounded-[10px] bg-[#7a5af8] hover:bg-[#6a4ce3] text-white transition-all duration-200"
+            >
+              {busy ? "Hold on..." : "Create Battle"}
+            </Button>
           </form>
         </div>
       </main>
@@ -185,4 +141,4 @@ const CreateNewHabit = () => {
   );
 };
 
-export default CreateNewHabit;
+export default CreateHabitBattle;
